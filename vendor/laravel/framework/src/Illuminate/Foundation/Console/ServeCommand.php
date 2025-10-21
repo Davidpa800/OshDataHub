@@ -101,13 +101,7 @@ class ServeCommand extends Command
                 return false;
             }
 
-            if ($workers > 1 &&
-                ! $this->option('no-reload') &&
-                ! (int) env('LARAVEL_SAIL', 0)) {
-                return false;
-            }
-
-            return $workers;
+            return $workers > 1 && ! $this->option('no-reload') ? false : $workers;
         });
 
         parent::initialize($input, $output);

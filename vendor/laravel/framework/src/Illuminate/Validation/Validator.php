@@ -309,7 +309,7 @@ class Validator implements ValidatorContract
     /**
      * The current random hash for the validator.
      *
-     * @var string|null
+     * @var string
      */
     protected static $placeholderHash;
 
@@ -1287,10 +1287,9 @@ class Validator implements ValidatorContract
      * Get the data that should be injected into the iteration of a wildcard "sometimes" callback.
      *
      * @param  string  $attribute
-     * @param  bool  $removeLastSegmentOfAttribute
-     * @return \Illuminate\Support\Fluent|mixed
+     * @return \Illuminate\Support\Fluent|array|mixed
      */
-    private function dataForSometimesIteration(string $attribute, bool $removeLastSegmentOfAttribute)
+    private function dataForSometimesIteration(string $attribute, $removeLastSegmentOfAttribute)
     {
         $lastSegmentOfAttribute = strrchr($attribute, '.');
 
@@ -1659,16 +1658,6 @@ class Validator implements ValidatorContract
         [$class, $method] = Str::parseCallback($callback, 'validate');
 
         return $this->container->make($class)->{$method}(...array_values($parameters));
-    }
-
-    /**
-     * Flush the validator's global state.
-     *
-     * @return void
-     */
-    public static function flushState()
-    {
-        static::$placeholderHash = null;
     }
 
     /**

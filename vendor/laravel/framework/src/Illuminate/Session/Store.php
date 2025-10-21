@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
@@ -495,7 +494,7 @@ class Store implements Session
     /**
      * Reflash a subset of the current flash data.
      *
-     * @param  mixed  $keys
+     * @param  array|mixed  $keys
      * @return void
      */
     public function keep($keys = null)
@@ -538,16 +537,6 @@ class Store implements Session
     public function flashInput(array $value)
     {
         $this->flash('_old_input', $value);
-    }
-
-    /**
-     * Get the session cache instance.
-     *
-     * @return \Illuminate\Contracts\Cache\Repository
-     */
-    public function cache()
-    {
-        return Cache::store('session');
     }
 
     /**

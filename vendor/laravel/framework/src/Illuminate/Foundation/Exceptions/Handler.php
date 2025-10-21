@@ -73,13 +73,6 @@ class Handler implements ExceptionHandlerContract
     protected $dontReport = [];
 
     /**
-     * The callbacks that inspect exceptions to determine if they should be reported.
-     *
-     * @var array
-     */
-    protected $dontReportCallbacks = [];
-
-    /**
      * The callbacks that should be used during reporting.
      *
      * @var \Illuminate\Foundation\Exceptions\ReportableHandler[]
@@ -287,23 +280,6 @@ class Handler implements ExceptionHandlerContract
     }
 
     /**
-     * Register a callback to determine if an exception should not be reported.
-     *
-     * @param  (callable(\Throwable): bool)  $dontReportWhen
-     * @return $this
-     */
-    public function dontReportWhen(callable $dontReportWhen)
-    {
-        if (! $dontReportWhen instanceof Closure) {
-            $dontReportWhen = Closure::fromCallable($dontReportWhen);
-        }
-
-        $this->dontReportCallbacks[] = $dontReportWhen;
-
-        return $this;
-    }
-
-    /**
      * Indicate that the given exception type should not be reported.
      *
      * @param  array|string  $exceptions
@@ -435,12 +411,6 @@ class Handler implements ExceptionHandlerContract
 
         if (! is_null(Arr::first($dontReport, fn ($type) => $e instanceof $type))) {
             return true;
-        }
-
-        foreach ($this->dontReportCallbacks as $dontReportCallback) {
-            if ($dontReportCallback($e) === true) {
-                return true;
-            }
         }
 
         return rescue(fn () => with($this->throttle($e), function ($throttle) use ($e) {
@@ -1046,12 +1016,12 @@ class Handler implements ExceptionHandlerContract
             if (! empty($alternatives = $e->getAlternatives())) {
                 $message .= '. Did you mean one of these?';
 
-                (new Error($output))->render($message);
-                (new BulletList($output))->render($alternatives);
+                with(new Error($output))->render($message);
+                with(new BulletList($output))->render($alternatives);
 
                 $output->writeln('');
             } else {
-                (new Error($output))->render($message);
+                with(new Error($output))->render($message);
             }
 
             return;
